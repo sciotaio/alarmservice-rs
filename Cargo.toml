@@ -1,0 +1,3 @@
+[workspace]
+members = ["src/models-rs", "src/alarmservice-rs"]
+resolver = "2"

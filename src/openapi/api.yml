@@ -1,0 +1,118 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: Alarmservice Demo
+ 
+paths:
+  /hello:
+    get:
+      parameters:
+      - in: query
+        name: name
+        required: false
+        schema:
+          type: string
+          example: World
+      summary: A healthcheck endpoint
+      responses:
+        "200":
+          description: OK
+  
+  /alarm:
+    get:
+      parameters:
+      - in: query
+        name: roomId
+        required: true
+        schema:
+          type: integer
+          example: 1
+      summary: query alarms for room
+      responses:
+        "200":
+          description: OK
+
+  /event:
+    post:
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Event'
+      responses:
+        '201':
+          description: Created
+
+components:
+  schemas:
+
+    Event:
+      type: object
+      properties:
+        eventType:
+          type: string
+        roomId: 
+          type: integer
+          format: int64
+        timestamp:
+          type: string
+          format: date-time
+      required:
+        - eventType
+        - roomId
+      example:
+        eventType: MOTION
+        roomId: 1
+        #timestamp: 2024-09-09T11:00:00.000+00:00
+
+    Alarm:
+      type: object
+      properties:
+        reason:
+          type: string
+        acknowledged:
+          type: boolean
+        timestamp:
+          type: string
+          format: date-time
+        alarmId: 
+          type: integer
+          format: int64
+        roomId: 
+          type: integer
+          format: int64
+    
+    Schedule:
+      type: object
+      properties:
+        begin:
+          type: integer
+          minimum: 0
+          maximum: 1439
+        end:
+          type: integer
+          minimum: 0
+          maximum: 1439
+        days_of_week_mask:
+          type: integer
+        roomId: 
+          type: integer
+          format: int64
+      example:
+        begin: 0
+        end: 1439
+        days_of_week_mask: 127 # all days of the week.
+        roomId: 1
+
+    Room:
+      type: object
+      properties:
+        roomId: 
+          type: integer
+          format: int64
+        name: 
+          type: string
+      required:
+        - message
+

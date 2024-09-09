@@ -1,0 +1,12 @@
+{{>partial_header}}
+#![allow(dead_code)]
+#![allow(unused_imports)]
+#![allow(clippy::to_string_trait_impl)]
+#![allow(clippy::new_without_default)]
+
+{{#models}}
+{{#model}}
+pub mod {{{classFilename}}};
+pub use self::{{{classFilename}}}::{{{classname}}};
+{{/model}}
+{{/models}}
