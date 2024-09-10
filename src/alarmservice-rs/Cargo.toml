@@ -14,3 +14,11 @@ serde = { version = "1.0.197", features = ["derive"] }
 # add 'tracing' crate as logging framework
 tracing = { version= "0.1" }
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+# add 'seaorm' crate for ORM
+sea-orm = { version = "1.0.1", features = [
+    "sqlx-postgres",
+    "runtime-tokio-native-tls",
+    "macros",
+    "with-chrono",
+] }

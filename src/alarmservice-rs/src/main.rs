@@ -1,9 +1,11 @@
 mod config;
 mod tracing;
+mod persistence;
 
 use std::{thread, time::Duration};
 
 use config::AppConfig;
+use persistence::database::init_connection;
 use ::tracing::info;
 use tracing::init_tracing;
 
@@ -13,6 +15,9 @@ fn main() {
     // init tracing
     let directives = &config.logging.levels.join(",");
     init_tracing(directives);
+
+    // init DB
+    init_connection(config.postgres).await;
 
     info!("Initialization done.");
     info!("Starting server at port {} ...", config.server.port);
