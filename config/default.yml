@@ -1,0 +1,16 @@
+server:
+  port: 90001
+
+logging:
+  levels:
+    - hyper=info
+    - sqlx=warn
+    - tower=info
+    - alarmservice_rs=debug
+
+postgres:
+  host: "localhost"
+  port: 20001
+  user: "demo"
+  password: "demo"
+  database: "demo_postgres"

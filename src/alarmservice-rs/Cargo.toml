@@ -11,3 +11,6 @@ config = { version = "0.14", features = ["yaml"] }
 # enable (de)serialization for annotated structs
 serde = { version = "1.0.197", features = ["derive"] }
 
+# add 'tracing' crate as logging framework
+tracing = { version= "0.1" }
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
