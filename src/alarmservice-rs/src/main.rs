@@ -9,7 +9,8 @@ use persistence::database::init_connection;
 use ::tracing::info;
 use tracing::init_tracing;
 
-fn main() {
+#[tokio::main]
+async fn main() {
     let config = AppConfig::parse().expect("Parsing config failed!");
 
     // init tracing

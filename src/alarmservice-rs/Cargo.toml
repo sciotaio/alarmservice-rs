@@ -22,3 +22,6 @@ sea-orm = { version = "1.0.1", features = [
     "macros",
     "with-chrono",
 ] }
+
+# add 'tokyo' crate for async support
+tokio = { version = "1.40.0", features = ["full", "tracing"] }
