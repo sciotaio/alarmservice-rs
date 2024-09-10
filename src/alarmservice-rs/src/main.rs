@@ -1,3 +1,6 @@
+mod config;
+use config::AppConfig;
 fn main() {
-    println!("Hello, world!");
+    let config = AppConfig::parse().expect("Parsing config failed!");
+
 }

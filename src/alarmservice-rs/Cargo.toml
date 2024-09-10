@@ -4,3 +4,10 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+
+# parse config files
+config = { version = "0.14", features = ["yaml"] }
+
+# enable (de)serialization for annotated structs
+serde = { version = "1.0.197", features = ["derive"] }
+
