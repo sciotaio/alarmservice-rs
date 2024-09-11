@@ -1,14 +1,17 @@
+mod api;
 mod config;
-mod tracing;
 mod persistence;
+mod tracing;
 
-use std::{thread, time::Duration};
+use std::net::SocketAddr;
 
+use ::tracing::info;
+use api::router::{router, AppState};
 use clap::Parser;
 use config::AppConfig;
 use persistence::{database::init_connection, migration::Migrator};
 use sea_orm_migration::MigratorTrait;
-use ::tracing::info;
+use tokio::net::TcpListener;
 use tracing::init_tracing;
 
 #[derive(Parser, Debug)]
@@ -31,12 +34,25 @@ async fn main() {
 
     // init DB
     let db_conn = init_connection(config.postgres).await;
-    
+
     // run migrations
-    Migrator::up(&db_conn, None).await.expect("Migrations failed!");
+    Migrator::up(&db_conn, None)
+        .await
+        .expect("Migrations failed!");
 
     info!("Initialization done.");
-    info!("Starting server at port {} ...", config.server.port);
 
-    thread::sleep(Duration::from_secs(100));
+    let state = AppState { conn: db_conn };
+
+    let router = router(state);
+
+    // start our server
+    let addr = SocketAddr::from(([0, 0, 0, 0], config.server.port as u16));
+    info!("Listening on port '{}'", config.server.port as u16);
+    let listener = TcpListener::bind(&addr)
+        .await
+        .expect("Failed to initialize tcp listener!");
+    axum::serve(listener, router)
+        .await
+        .expect("Failed to start the server!");
 }
