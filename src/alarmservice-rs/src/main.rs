@@ -5,7 +5,8 @@ mod persistence;
 use std::{thread, time::Duration};
 
 use config::AppConfig;
-use persistence::database::init_connection;
+use persistence::{database::init_connection, migration::Migrator};
+use sea_orm_migration::MigratorTrait;
 use ::tracing::info;
 use tracing::init_tracing;
 
@@ -18,10 +19,13 @@ async fn main() {
     init_tracing(directives);
 
     // init DB
-    init_connection(config.postgres).await;
+    let db_conn = init_connection(config.postgres).await;
+    
+    // run migrations
+    Migrator::up(&db_conn, None).await.expect("Migrations failed!");
 
     info!("Initialization done.");
     info!("Starting server at port {} ...", config.server.port);
 
-    thread::sleep(Duration::from_millis(100));
+    thread::sleep(Duration::from_secs(100));
 }
