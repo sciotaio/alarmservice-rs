@@ -5,6 +5,9 @@ edition = "2021"
 
 [dependencies]
 
+# add clap for parsing cmd line arguments
+clap = { version = "4.5.17", features = ["derive"] }
+
 # parse config files
 config = { version = "0.14", features = ["yaml"] }
 
@@ -27,3 +30,4 @@ sea-orm-migration = "1.0.1"
 
 # add 'tokyo' crate for async support
 tokio = { version = "1.40.0", features = ["full", "tracing"] }
+

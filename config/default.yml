@@ -1,5 +1,5 @@
 server:
-  port: 90001
+  port: 9001
 
 logging:
   levels:
