@@ -1,14 +1,17 @@
 use axum::{extract::State, http::StatusCode, Json};
 use models::models::RoomDto;
+use sea_orm::EntityTrait;
 
-use crate::api::{errors::CustomError, router::AppState};
+use crate::{api::{errors::CustomError, router::AppState}, persistence::entities::room};
 
 pub async fn get_rooms_handler(
-    _state: State<AppState>,
+    state: State<AppState>,
 ) -> Result<(StatusCode, Json<Vec<RoomDto>>), CustomError> {
-    let res = vec![RoomDto {
-        name: Some("Dummy Room Dto".to_string()),
-        ..Default::default()
-    }];
+    let res = room::Entity::find()
+        .all(&state.conn)
+        .await?
+        .iter()
+        .map(RoomDto::from)
+        .collect();
     Ok((StatusCode::OK, Json(res)))
 }

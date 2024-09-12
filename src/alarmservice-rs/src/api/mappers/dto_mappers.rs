@@ -1,7 +1,7 @@
-use models::models::ScheduleDto;
+use models::models::{AlarmDto, RoomDto, ScheduleDto};
 use sea_orm::Set;
 
-use crate::persistence::entities::schedule;
+use crate::persistence::entities::{alarm, room, schedule};
 
 impl TryFrom<ScheduleDto> for schedule::ActiveModel {
     type Error = String;
@@ -65,6 +65,28 @@ impl From<&schedule::Model> for ScheduleDto {
             end: Some(value.end),
             days_of_week_mask: Some(value.days_of_week_mask),
             room_id: Some(value.room_id),
+            ..Default::default()
+        }
+    }
+}
+
+impl From<&alarm::Model> for AlarmDto {
+    fn from(value: &alarm::Model) -> Self {
+        AlarmDto {
+            reason: Some(value.reason.to_owned()),
+            acknowledged: Some(value.acknowledged.to_owned()),
+            timestamp: Some(value.timestamp.to_rfc3339()),
+            alarm_id: Some(value.id.to_owned()),
+            room_id: Some(value.room_id.to_owned()),
+        }
+    }
+}
+
+impl From<&room::Model> for RoomDto {
+    fn from(value: &room::Model) -> Self {
+        RoomDto {
+            room_id: Some(value.id),
+            name: Some(value.name.to_owned()),
         }
     }
 }
