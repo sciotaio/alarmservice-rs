@@ -30,13 +30,14 @@ pub async fn acknowledge_alarm_handler(
     Path(alarm_id): Path<i64>,
     state: State<AppState>,
 ) -> Result<StatusCode, CustomError> {
-
     info!("[alarms_handler] acknowledge alarm with id '{alarm_id}'");
 
     alarm::Entity::find_by_id(alarm_id)
         .one(&state.conn)
         .await
-        .map_err(|e| CustomError::InternalServerError(format!("Could not query alarm from DB: {e}")))?
+        .map_err(|e| {
+            CustomError::InternalServerError(format!("Could not query alarm from DB: {e}"))
+        })?
         .ok_or_else(|| CustomError::NotFound)
         .map(|model| {
             let active_model: alarm::ActiveModel = model.into();
@@ -46,13 +47,15 @@ pub async fn acknowledge_alarm_handler(
             db_alarm.acknowledged = Set(true);
             Ok(db_alarm)
         })
-        .map( |acknowledged_alarm| async {
-                alarm::Entity::update(acknowledged_alarm)
-                    .exec(&state.conn).await
-            }
-        )?
+        .map(|acknowledged_alarm| async {
+            alarm::Entity::update(acknowledged_alarm)
+                .exec(&state.conn)
+                .await
+        })?
         .await
-        .map_err(|e|CustomError::InternalServerError(format!("Could not acknowledge alarm in DB: {e}")))?;
-        
+        .map_err(|e| {
+            CustomError::InternalServerError(format!("Could not acknowledge alarm in DB: {e}"))
+        })?;
+
     Ok(StatusCode::OK)
 }

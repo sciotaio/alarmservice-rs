@@ -5,7 +5,7 @@ use axum::{
 
 use sea_orm::DatabaseConnection;
 
-use super::handlers::{alarms_handler::{acknowledge_alarm_handler, get_alarms_handler}, hello_handler::hello_handler as get_hello_handler, rooms_handler::get_rooms_handler, schedule_handler::{get_schedules_handler, post_schedule_handler}};
+use super::handlers::{alarms_handler::{acknowledge_alarm_handler, get_alarms_for_room_handler}, hello_handler::hello_handler as get_hello_handler, rooms_handler::{active_alarm_count_handler, get_rooms_handler}, schedule_handler::{get_schedules_handler, post_schedule_handler}};
 
 #[derive(Clone)]
 pub struct AppState {
@@ -18,8 +18,9 @@ pub fn router(state: AppState) -> Router {
     let routes: Router = Router::new()
         .route("/hello", get(get_hello_handler))
         .route("/room", get(get_rooms_handler))
+        .route("/room/:id/alarmcount", get(active_alarm_count_handler))
         .route("/alarm/:id/acknowledge", post(acknowledge_alarm_handler))
-        .route("/alarm", get(get_alarms_handler))
+        .route("/alarm", get(get_alarms_for_room_handler))
         .with_state(state.clone());
 
     let schedules_router = schedules_router(state.clone());
