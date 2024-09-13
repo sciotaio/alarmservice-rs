@@ -35,5 +35,8 @@ tokio = { version = "1.40.0", features = ["full", "tracing"] }
 # add 'axum' crate for web
 axum = { version = "0.7.5", features = ["macros"] }
 
-## add our local 'models' crate for importing dtos
+# add our local 'models' crate for importing dtos
 models = { path = "../models-rs" }
+
+# add chrono for easier timezone handling
+chrono = "0.4.38"

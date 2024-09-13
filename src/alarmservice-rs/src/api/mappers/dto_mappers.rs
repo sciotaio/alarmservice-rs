@@ -1,5 +1,6 @@
-use models::models::{AlarmDto, RoomDto, ScheduleDto};
-use sea_orm::Set;
+use chrono::{DateTime, Utc};
+use models::models::{AlarmDto, EventDto, RoomDto, ScheduleDto};
+use sea_orm::{ActiveValue::NotSet, Set};
 
 use crate::persistence::entities::{alarm, room, schedule};
 
@@ -87,6 +88,18 @@ impl From<&room::Model> for RoomDto {
         RoomDto {
             room_id: Some(value.id),
             name: Some(value.name.to_owned()),
+        }
+    }
+}
+
+impl From<(EventDto, DateTime<Utc>)> for alarm::ActiveModel {
+    fn from(value: (EventDto, DateTime<Utc>)) -> Self {
+        alarm::ActiveModel {
+            id: NotSet,
+            reason: Set(value.0.event_type),
+            timestamp: Set(value.1),
+            room_id: Set(value.0.room_id),
+            acknowledged: Set(false),
         }
     }
 }
