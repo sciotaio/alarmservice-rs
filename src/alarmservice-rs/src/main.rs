@@ -1,5 +1,6 @@
 mod api;
 mod config;
+mod metrics;
 mod persistence;
 mod tracing;
 
@@ -7,8 +8,10 @@ use std::net::SocketAddr;
 
 use ::tracing::info;
 use api::router::{router, AppState};
+use axum_prometheus::metrics_exporter_prometheus::PrometheusBuilder;
 use clap::Parser;
 use config::AppConfig;
+use metrics::AppMetrics;
 use persistence::{database::init_connection, migration::Migrator};
 use sea_orm_migration::MigratorTrait;
 use tokio::net::TcpListener;
@@ -42,9 +45,19 @@ async fn main() {
 
     info!("Initialization done.");
 
-    let state = AppState { conn: db_conn };
+    // initialize AppMetrics
+    let metric_handle = PrometheusBuilder::new()
+        .add_global_label("app", "alertservice-rs")
+        .install_recorder()
+        .expect("Failed to initialize prometheus metric handle");
+    let app_metrics = AppMetrics::init();
 
-    let router = router(state);
+    // initialize application state and routes
+    let state = AppState {
+        conn: db_conn,
+        metrics: app_metrics,
+    };
+    let router = router(state, metric_handle);
 
     // start our server
     let addr = SocketAddr::from(([0, 0, 0, 0], config.server.port as u16));

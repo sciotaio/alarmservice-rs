@@ -23,5 +23,5 @@ fn prepare_count_active_alarms(room_id: i64) -> Selector<SelectModel<AlarmCount>
 
 #[derive(Clone, Debug, FromQueryResult)]
 pub struct AlarmCount {
-    pub active_alarm_count: i32,
+    pub active_alarm_count: i64,
 }

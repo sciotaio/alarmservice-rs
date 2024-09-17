@@ -24,6 +24,9 @@ pub async fn new_event_handler(
         .await?
         .ok_or_else(|| CustomError::NotFound)?;
 
+    // update events_counter
+    state.metrics.events_counter.increment(1);
+
     // parse timestamp (and possibly fail) or use Utc::now()
     let event_ts_actual = event_dto.clone().timestamp.map_or_else(
         || Ok::<DateTime<Utc>, CustomError>(Utc::now()), // sorry, if you didn't provide a timestamp, i'm going to use my own time here!

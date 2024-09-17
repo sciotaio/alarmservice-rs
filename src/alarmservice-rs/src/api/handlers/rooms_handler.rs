@@ -41,5 +41,5 @@ pub async fn active_alarm_count_handler(
 
 #[derive(Serialize, Deserialize)]
 pub struct AlarmCountDto {
-    pub active_alarm_count: i32,
+    pub active_alarm_count: i64,
 }

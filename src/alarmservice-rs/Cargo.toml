@@ -40,3 +40,8 @@ models = { path = "../models-rs" }
 
 # add chrono for easier timezone handling
 chrono = "0.4.38"
+
+# add 'axum-prometheus' to collect HTTP and custom metrics
+axum-prometheus = { version = "0.7", features = [
+    "metrics-exporter-prometheus",
+] }
